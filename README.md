@@ -1,5 +1,5 @@
-# PlacementDataCollection
+# Webpage
 
-Code written to process crime data in a given area and collect images of the local surroundings for the following paper 
+Webpage written in HTML with a Python backend using the Flask framework.
 
-https://pure.hud.ac.uk/en/publications/built-environment-attributes-and-crime-an-automated-machine-learn
+Handles loading the CSV and processing it to load the location on Google Maps so the location data could be collected to be later processed. 
