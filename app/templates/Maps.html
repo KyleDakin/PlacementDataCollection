@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        html, body {
+            height: 97%;
+            margin: 1px;
+            padding: 1px;
+        }
+
+        #pano {
+            height: 100%;
+            width: 100%;
+            padding: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <form action="/process" method="POST">
+        <input type="file" name="dataProcess" value="{{request.form.data}}" accept="file/csv" id="process" />
+        <button type="submit" id="Process">Process Data</button>
+    </form>
+
+    <form action="/index" method="POST">
+        <input type="file" name="dataFile" value="{{request.form.data}}" accept="file/csv" id="data" />
+        <button type="submit" id="Submit">Submit Data</button>
+    </form>
+
+
+    <form action="/change" method="POST">
+        <a href="changeAddress"><input type="button" id="nextButton" value="nextAddress" /></a>
+    </form>
+
+
+    <div style="width:0%; margin:10px, auto" id="map"></div>
+    <div style="width:100%; margin:10px, auto" id="pano"></div>
+
+    <script>
+
+        const appendChild = Element.prototype.appendChild;
+
+        // All services to catch
+        const urlCatchers = [
+            "/AuthenticationService.Authenticate?",
+            "/QuotaService.RecordEvent?"
+        ];
+
+        // Google Map is using JSONP.
+        // So we only need to detect the services removing access and disabling them by not
+        // inserting them inside the DOM
+        Element.prototype.appendChild = function (element) {
+            const isGMapScript = element.tagName === 'SCRIPT' && /maps\.googleapis\.com/i.test(element.src);
+
+            const isGMapAccessScript = isGMapScript && urlCatchers.some(url => element.src.includes(url));
+
+            if (!isGMapAccessScript) {
+                return appendChild.call(this, element);
+            }
+
+            // Extract the callback to call it with success data
+            // Only needed if you actually want to use Autocomplete/SearchBox API
+            //const callback = element.src.split(/.*callback=([^\&]+)/, 2).pop();
+            //const [a, b] = callback.split('.');
+            //window[a][b]([1, null, 0, null, null, [1]]);
+
+            // Returns the element to be compliant with the appendChild API
+            return element;
+        };
+
+        var map, centre, panorama;
+        lat = {{ latitude }}
+        lng = {{ longitude }}
+        rot = {{ rotation }}
+
+        function initMap() {
+            //Sets up satellite and street view cameras.
+            centre = { lat, lng };
+           /* map = new google.maps.Map(document.getElementById('map'), {
+                center: centre,
+                zoom: 19,
+                mapTypeId: 'satellite',
+
+            });*/
+            panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'), {
+                position: centre,
+                pov: { heading: rot, pitch: 0}
+            });
+
+            //Listener events for mouse click to move both cameras to the address clicked by the user
+            /*map.addListener('click', function (e) {
+                centre = e.latLng;
+                updateCameraPosition();
+            });*/
+
+            panorama.addListener('click', function (e) {
+                centre = e.latLng;
+                updateCameraPosition();
+            });
+            try {
+                map.setStreetView(panorama);
+            } catch (err) {
+                if (document.getElementById("data") == null) {
+                    console.log("error");
+                    document.getElementById("nextCrime").click();
+                }
+                else {
+                    panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'), {
+                position: { lat: 53.4569491, lng: -2.2514661 },
+                pov: { heading: 280, pitch: 170 }
+                });
+                }
+            }
+
+        }
+
+    </script>
+
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=Access_Token&callback=initMap">
+    </script>
+
+</body>
+</html>
