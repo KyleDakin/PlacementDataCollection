@@ -28,17 +28,15 @@ def testRandomPoints(address, i, j):
 
 	
 def run():
-    writer = csv.writer(open('K:/Book1.csv', 'w+', newline=''))
+    writer = csv.writer(open('CSV To Write To.csv', 'w+', newline=''))
     lat = 53.63804698 
     long = -1.77954088
     writer.writerow(['latitude', 'longitude', 'method'])
     writer.writerow([lat, long, 'start'])
     for j in range(0, 360, int(30)):
         string = generateRandomPoints(lat, long, 1, j)
-        string.append("Wut")
         writer.writerow(string)
         string = generateRandomPoints(lat, long, 5, j)
-        string.append("second")
         writer.writerow(string)
         
     for y in range(0, 360, int(30)):

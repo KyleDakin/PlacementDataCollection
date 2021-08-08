@@ -91,8 +91,8 @@ def generateData():
     
     sortData(reader)
 
-    reader = csv.reader(open('CrimeData/Sorted.csv', 'r'))
-    writer = csv.writer(open('CSV To Write To', 'w+', newline=''))
+    reader = csv.reader(open('CSV To Read From.csv', 'r'))
+    writer = csv.writer(open('CSV To Write To.csv', 'w+', newline=''))
 
     count = 0
     a = 0
@@ -129,7 +129,7 @@ def getString(file, line):
     return string
 
 def sortData(reader):
-    writer = csv.writer(open('CrimeData/Sorted.csv', 'w+', newline=''))    
+    writer = csv.writer(open('CSV To Write To.csv', 'w+', newline=''))
     sortedlist = sorted(reader, key=lambda row: row[6], reverse=False)
     writer.writerows(sortedlist)
 
